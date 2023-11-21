@@ -4,6 +4,8 @@ import com.codescouts.hexagonal.codescoutshexagonaltraining.order.adapter.in.req
 import com.codescouts.hexagonal.codescoutshexagonaltraining.order.adapter.in.responses.CheckoutResponse;
 import com.codescouts.hexagonal.codescoutshexagonaltraining.order.adapter.in.responses.GetOrderResponse;
 import com.codescouts.hexagonal.codescoutshexagonaltraining.order.application.services.OrderRepository;
+import com.codescouts.hexagonal.codescoutshexagonaltraining.order.application.usecase.AddOrderUseCase;
+import com.codescouts.hexagonal.codescoutshexagonaltraining.order.application.usecase.GetOrderUseCase;
 import com.codescouts.hexagonal.codescoutshexagonaltraining.order.domain.commands.OrderProductLine;
 import com.codescouts.hexagonal.codescoutshexagonaltraining.order.domain.entities.Customer;
 import com.codescouts.hexagonal.codescoutshexagonaltraining.order.domain.entities.Order;
@@ -24,23 +26,27 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
 
+    private final GetOrderUseCase getOrderUseCase;
+
+    private final AddOrderUseCase addOrderUseCase;
+
+
     private final OrderRepository orderRepository;
     private final PaymentService paymentService;
 
     @Autowired
-    public OrderController(PaymentService paymentService,
+    public OrderController(GetOrderUseCase getOrderUseCase, AddOrderUseCase addOrderUseCase, PaymentService paymentService,
                            OrderRepository orderRepository) {
+        this.getOrderUseCase = getOrderUseCase;
+        this.addOrderUseCase = addOrderUseCase;
         this.paymentService = paymentService;
         this.orderRepository = orderRepository;
     }
 
     @GetMapping("/{orderId}")
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable UUID orderId) throws OrderDoesNotExistException {
-        var order = this.orderRepository.findById(orderId);
+        var order = this.getOrderUseCase.findOrder(orderId);
 
-        if (order == null) {
-            throw new OrderDoesNotExistException(orderId);
-        }
 
         return ResponseEntity.ok(new GetOrderResponse(order.id, order.status));
     }
