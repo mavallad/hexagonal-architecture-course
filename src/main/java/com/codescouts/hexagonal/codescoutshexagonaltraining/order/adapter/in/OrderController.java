@@ -47,7 +47,6 @@ public class OrderController {
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable UUID orderId) throws OrderDoesNotExistException {
         var order = this.getOrderUseCase.findOrder(orderId);
 
-
         return ResponseEntity.ok(new GetOrderResponse(order.id, order.status));
     }
 
@@ -110,12 +109,6 @@ public class OrderController {
                 .toList();
     }
 
-    private void validateStock(Order order) throws StockIsNotEnoughException {
-        if (order.products.stream().anyMatch(product -> product.quantity > product.stock)) {
-            throw new StockIsNotEnoughException();
-        }
-    }
-
     private void pay(Order order) throws PaymentErrorException {
         var payment = this.paymentService.pay(this.getTotal(order), order.currency);
 
@@ -132,7 +125,4 @@ public class OrderController {
                 .reduce(0F, Float::sum);
     }
 
-    private void updateStock(Order order) {
-        order.products.forEach(product -> product.stock = product.stock - product.quantity);
-    }
 }

@@ -1,5 +1,8 @@
 package com.codescouts.hexagonal.codescoutshexagonaltraining.order.domain.entities;
 
+import com.codescouts.hexagonal.codescoutshexagonaltraining.order.domain.exceptions.StockIsNotEnoughException;
+
+import java.util.List;
 import java.util.UUID;
 
 public class Product {
@@ -15,13 +18,24 @@ public class Product {
                    float unitPrice,
                    String currencyCode,
                    int quantity,
-                   int stock) {
+                   int stock) throws StockIsNotEnoughException {
         this.id = id;
         this.name = name;
         this.currencyCode = currencyCode;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
         this.stock = stock;
+        validateStock();
+    }
+
+    private void validateStock() throws StockIsNotEnoughException {
+        if (quantity > stock) {
+            throw new StockIsNotEnoughException();
+        }
+    }
+
+    public void updateStock() {
+        stock = stock - quantity;
     }
 }
 
