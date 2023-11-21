@@ -1,5 +1,6 @@
 package com.codescouts.hexagonal.codescoutshexagonaltraining.order.adapter.in.requests;
 
+import com.codescouts.hexagonal.codescoutshexagonaltraining.order.domain.commands.CheckoutOrder;
 import com.codescouts.hexagonal.codescoutshexagonaltraining.order.domain.commands.OrderProductLine;
 import jakarta.validation.constraints.NotBlank;
 
@@ -26,5 +27,8 @@ public class CheckoutOrderRequest {
                 .map(item ->
                         new OrderProductLine(item.id(), item.quantity()))
                 .toList();
+    }
+    public CheckoutOrder mapToCheckoutOrder(){
+        return new CheckoutOrder(customerId,items(), currencyCode);
     }
 }

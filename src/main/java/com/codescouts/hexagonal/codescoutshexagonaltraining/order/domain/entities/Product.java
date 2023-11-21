@@ -18,17 +18,18 @@ public class Product {
                    float unitPrice,
                    String currencyCode,
                    int quantity,
-                   int stock) throws StockIsNotEnoughException {
+                   int stock) {
         this.id = id;
         this.name = name;
         this.currencyCode = currencyCode;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
         this.stock = stock;
-        validateStock();
     }
 
-    private void validateStock() throws StockIsNotEnoughException {
+
+
+    public void validateStock() throws StockIsNotEnoughException {
         if (quantity > stock) {
             throw new StockIsNotEnoughException();
         }
@@ -38,4 +39,3 @@ public class Product {
         stock = stock - quantity;
     }
 }
-
